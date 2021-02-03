@@ -3,6 +3,9 @@ This is a morgan module saves logs to kafka
 
 # How to use
 ```
+import * as KafkaMorgan from './kafka-morgan';
+
+...
   app.use(
     KafkaMorgan({
       kafkaHost: 'localhost:9092',
