@@ -6,40 +6,44 @@ const passStream = new PassThrough();
 
 /**
  * KafkaMorgan object
- * @param  {object} KafkaClientOptions - represents kafka client options.
+ * @param  {object} kafkaClientOptions - represents kafka client options.
+ * @param  {object} topic - topic name. default value is 'accesslogs'.
  * @param  {object} options - represents morgan options, check their github, default value is empty object {}.
  * @param  {string} format - represents morgan formatting, check their github, default value is 'tiny'.
  */
-function KafkaMorgan(KafkaClientOptions, options, format) {
+function KafkaMorgan(kafkaClientOptions, topic, options, format) {
   // Filter the arguments
   // eslint-disable-next-line prefer-rest-params
   const args = Array.prototype.slice.call(arguments);
-  if (args.length === 0 || !KafkaClientOptions.kafkaHost) {
+  if (args.length === 0 || !kafkaClientOptions.kafkaHost) {
     throw new Error(
-      'KafkaClientOptions is null or empty. You can refer to Client Options (https://github.com/SOHU-Co/kafka-node#kafkaclient).',
+      'kafkaClientOptions is null or empty. You can refer to Client Options (https://github.com/SOHU-Co/kafka-node#kafkaclient).',
     );
   }
 
-  if (args.length > 1 && typeof options !== 'object') {
+  if (args.length > 1 && typeof topic !== 'string') {
+    throw new Error(
+      'Topic parameter should be a string. Default parameter is "accesslogs".',
+    );
+  }
+
+  if (args.length > 2 && typeof options !== 'object') {
     throw new Error(
       'Options parameter needs to be an object. You can specify empty object like {}.',
     );
   }
 
-  if (args.length > 2 && typeof format === 'object') {
+  if (args.length > 3 && typeof format === 'object') {
     throw new Error(
-      "Format parameter should be a string. Default parameter is 'tiny'.",
+      'Format parameter should be a string. Default parameter is "tiny".',
     );
   }
 
   const Producer = _Producer;
-  const client = new KafkaClient(KafkaClientOptions);
+  const client = new KafkaClient(kafkaClientOptions);
   const producer = new Producer(client);
-  producer.on('ready', function () {
-    console.log('kafka-morgan ready');
-  });
-
   options = options || {};
+  topic = topic || 'accesslogs';
   format = format || 'tiny';
 
   // Create stream to read from
@@ -58,7 +62,7 @@ function KafkaMorgan(KafkaClientOptions, options, format) {
                   If there are multiple partition, then we optimize the code here,
                   so that we send request to different partitions. 
     */
-    const payloads = [{ topic: 'accesslogs', messages: line, partition: 0 }];
+    const payloads = [{ topic, messages: line, partition: 0 }];
     producer.send(payloads);
   }
 
