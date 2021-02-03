@@ -7,11 +7,11 @@ const passStream = new PassThrough();
 /**
  * KafkaMorgan object
  * @param  {object} kafkaClientOptions - represents kafka client options.
- * @param  {object} topic - topic name. default value is 'accesslogs'.
+ * @param  {object} topicOptions - topic Options. default value is '{name: 'accesslogs', partition: 0}'.
  * @param  {object} options - represents morgan options, check their github, default value is empty object {}.
  * @param  {string} format - represents morgan formatting, check their github, default value is 'tiny'.
  */
-function KafkaMorgan(kafkaClientOptions, topic, options, format) {
+function KafkaMorgan(kafkaClientOptions, topicOptions, options, format) {
   // Filter the arguments
   // eslint-disable-next-line prefer-rest-params
   const args = Array.prototype.slice.call(arguments);
@@ -21,9 +21,9 @@ function KafkaMorgan(kafkaClientOptions, topic, options, format) {
     );
   }
 
-  if (args.length > 1 && typeof topic !== 'string') {
+  if (args.length > 1 && typeof topicOptions !== 'object') {
     throw new Error(
-      'Topic parameter should be a string. Default parameter is "accesslogs".',
+      'Topic parameter should be a string. Default topicOptions is "{name: accesslogs, partition: 0}".',
     );
   }
 
@@ -42,8 +42,9 @@ function KafkaMorgan(kafkaClientOptions, topic, options, format) {
   const Producer = _Producer;
   const client = new KafkaClient(kafkaClientOptions);
   const producer = new Producer(client);
+  const topic = (topicOptions && topicOptions.name) || 'accesslogs';
+  const partition = (topicOptions && topicOptions.partition) || 0;
   options = options || {};
-  topic = topic || 'accesslogs';
   format = format || 'tiny';
 
   // Create stream to read from
@@ -62,7 +63,7 @@ function KafkaMorgan(kafkaClientOptions, topic, options, format) {
                   If there are multiple partition, then we optimize the code here,
                   so that we send request to different partitions. 
     */
-    const payloads = [{ topic, messages: line, partition: 0 }];
+    const payloads = [{ topic, messages: line, partition }];
     producer.send(payloads);
   }
 
