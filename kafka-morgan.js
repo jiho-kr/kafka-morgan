@@ -33,7 +33,7 @@ function KafkaMorgan(kafkaClientOptions, topic, options, format) {
     );
   }
 
-  if (args.length > 3 && typeof format === 'object') {
+  if (args.length > 3 && typeof format !== 'string') {
     throw new Error(
       'Format parameter should be a string. Default parameter is "tiny".',
     );
