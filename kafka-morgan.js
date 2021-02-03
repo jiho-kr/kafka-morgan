@@ -8,7 +8,7 @@ const passStream = new PassThrough();
  * KafkaMorgan object
  * @param  {object} KafkaClientOptions - represents kafka client options.
  * @param  {object} options - represents morgan options, check their github, default value is empty object {}.
- * @param  {string} format - represents morgan formatting, check their github, default value is 'combined'.
+ * @param  {string} format - represents morgan formatting, check their github, default value is 'tiny'.
  */
 function KafkaMorgan(KafkaClientOptions, options, format) {
   // Filter the arguments
@@ -28,7 +28,7 @@ function KafkaMorgan(KafkaClientOptions, options, format) {
 
   if (args.length > 2 && typeof format === 'object') {
     throw new Error(
-      "Format parameter should be a string. Default parameter is 'combined'.",
+      "Format parameter should be a string. Default parameter is 'tiny'.",
     );
   }
 
