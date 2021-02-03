@@ -12,3 +12,14 @@ import * as KafkaMorgan from './kafka-morgan';
     }),
  ```
  You can refer to Client Options (https://github.com/SOHU-Co/kafka-node#kafkaclient)
+ 
+ ...
+  app.use(
+    KafkaMorgan(
+      {
+        kafkaHost: configService.get('KAFKA_BROKERS').toLocaleString(),
+      },
+      { topic: 'accesslogs', partition: 0 },
+    ),
+  );
+ ```
