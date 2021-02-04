@@ -42,10 +42,10 @@ function KafkaMorgan(kafkaClientOptions, topicOptions, options, format) {
   const Producer = _Producer;
   const client = new KafkaClient(kafkaClientOptions);
   const producer = new Producer(client);
-  const topic = (topicOptions && topicOptions.name) || 'accesslogs';
-  const partition = (topicOptions && topicOptions.partition) || 0;
-  options = options || {};
-  format = format || 'tiny';
+  const topic = (topicOptions && topicOptions.name) ?? 'accesslogs';
+  const partition = (topicOptions && topicOptions.partition) ?? 0;
+  options = options ?? {};
+  format = format ?? 'tiny';
 
   // Create stream to read from
   const lineStream = carry(passStream);
