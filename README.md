@@ -23,3 +23,12 @@ import * as KafkaMorgan from './kafka-morgan';
     ),
   );
  ```
+
+If you are using `nestjs` it is better to use it like this:
+```
+  const kafkaController = app.select(KafkaModule).get(KafkaController);
+  const format = morganJson(
+    ':date :method :url :status :req[content-length] :res[content-length] :response-time :remote-addr :user-agent',
+  );
+  app.use(morgan(format, { stream: kafkaController.stream() }));
+```
